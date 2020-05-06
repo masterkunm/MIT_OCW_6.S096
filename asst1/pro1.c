@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
+#define MAX_LINE_LENGTH 100
 #define BYTE 32
 #define FRACTION 23
 #define FRAC_START 9
@@ -41,9 +43,9 @@ void problem1_sol(float inf) {
     }
 
     // output -> macOS -> x86 -> little endian -> reverse output
-    for (int i = BYTE - 1; i >= 0; i--) {
-        printf("%d", b[i]);
-    } 
+    // for (int i = BYTE - 1; i >= 0; i--) {
+    //     printf("%d", b[i]);
+    // } 
 
     // reverse
     int end = BYTE - 1;
@@ -57,7 +59,7 @@ void problem1_sol(float inf) {
     }
 
     // newline
-    putchar('\n');
+    // putchar('\n');
 
     // check sign bit
     if (b[0] == 1) {
@@ -83,12 +85,61 @@ void problem1_sol(float inf) {
     printf("%d\n", exp - BASE);
 }
 
-int main() {
-    float fnum = -7.333;
+int main(int argc, char **argv) {
+    // run file with argument filename
 
-    print_hex(fnum);
+    // failed cases
+    // print_hex(0.00000000000000000000000000000000000001175495000000);
 
-    problem1_sol(fnum);
+    if (argc != 2) {
+        fprintf(stderr, "usage: ./pro1 testfile\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // open file check
+    FILE *testfile;
+    testfile = fopen(argv[1], "r");
+    if (testfile == NULL) {
+        perror(argv[1]);
+        exit(EXIT_FAILURE);
+    }
+    
+    // get data, check fail fgets
+    char buffer[MAX_LINE_LENGTH];
+    if (fgets(buffer, MAX_LINE_LENGTH, testfile) == NULL) {
+        perror("fgets");
+        exit(EXIT_FAILURE);
+    }
+
+    // convert to number
+    // check number value
+    int num = atoi(buffer);
+    if (num <= 0)
+        return 0;
+
+    // get data
+    // call func
+    for (int i = 0; i < num; i++) {
+        if (fgets(buffer, MAX_LINE_LENGTH, testfile) == NULL) {
+            perror("fgets");
+            exit(EXIT_FAILURE);
+        }
+        float inf = (float)strtod(buffer, NULL);
+        problem1_sol(inf);
+    }
+
+    // close file check
+    if (fclose(testfile) != 0) {
+        perror("fclose");
+        exit(EXIT_FAILURE);
+    }
+    /*testing*/
+
+    // float fnum = -7.333;
+
+    // print_hex(fnum);
+
+    // problem1_sol(fnum);
 
     return 0;
 }
