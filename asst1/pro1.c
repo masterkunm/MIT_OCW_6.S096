@@ -9,7 +9,7 @@
 // in binary right is less
 #define EXPO_START 8
 #define EXPONENT 8
-#define BASE 127
+#define BIAS 127
 
 union float_bit {
     float f;
@@ -66,14 +66,6 @@ void problem1_sol(float inf) {
         printf("-");
     }
 
-    // fraction part: mantissa bits
-    printf("1.");
-    for (int i = 0; i < FRACTION; i++) {
-        printf("%d", b[FRAC_START + i]);
-    }
-
-    printf(" * 2^");
-
     // exponent bits
     int exp = 0;
     for (int i = 0; i < EXPONENT; i++) {
@@ -82,14 +74,29 @@ void problem1_sol(float inf) {
         }
     }
 
-    printf("%d\n", exp - BASE);
+    // fraction part: mantissa bits
+    if (exp > 2 * BIAS) {
+        printf("inf\n");    /* Infinity case */
+    }
+    else if(exp == 0) {
+        printf("0.");       /* zero or denormal case */
+    }
+    else {
+        printf("1.");       /* normal case */
+    }
+
+    for (int i = 0; i < FRACTION; i++) {
+        printf("%d", b[FRAC_START + i]);
+    }
+
+    printf(" * 2^");
+
+    // output exponent bits
+    printf("%d\n", exp - BIAS);
 }
 
 int main(int argc, char **argv) {
     // run file with argument filename
-
-    // failed cases
-    // print_hex(0.00000000000000000000000000000000000001175495000000);
 
     if (argc != 2) {
         fprintf(stderr, "usage: ./pro1 testfile\n");
